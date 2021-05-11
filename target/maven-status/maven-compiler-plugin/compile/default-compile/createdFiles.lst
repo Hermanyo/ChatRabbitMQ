@@ -1,3 +1,13 @@
-br/ufs/dcomp/ExemploRabbitMQ/Emissor.class
-br/ufs/dcomp/ExemploRabbitMQ/Receptor.class
-br/ufs/dcomp/ExemploRabbitMQ/Receptor$1.class
+br/ufs/dcomp/ChatRabbitMQ/MessageData$Message$Builder.class
+br/ufs/dcomp/ChatRabbitMQ/MessageData$Content$1.class
+br/ufs/dcomp/ChatRabbitMQ/MessageData$ContentOrBuilder.class
+br/ufs/dcomp/ChatRabbitMQ/MessageData$Message$1.class
+br/ufs/dcomp/ChatRabbitMQ/MessageData$Message.class
+br/ufs/dcomp/ChatRabbitMQ/MessageData.class
+br/ufs/dcomp/ChatRabbitMQ/MessageData$Content$Builder.class
+br/ufs/dcomp/ChatRabbitMQ/MessageData$MessageOrBuilder.class
+br/ufs/dcomp/ChatRabbitMQ/Chat.class
+br/ufs/dcomp/ChatRabbitMQ/Chat$1.class
+br/ufs/dcomp/ChatRabbitMQ/Chat$2.class
+br/ufs/dcomp/ChatRabbitMQ/MessageData$Content.class
+br/ufs/dcomp/ChatRabbitMQ/MessageData$1.class
