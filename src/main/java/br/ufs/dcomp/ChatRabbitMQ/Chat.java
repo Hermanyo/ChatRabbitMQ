@@ -68,26 +68,25 @@ public class Chat {
       exchange_name = "";
     } 
     else if(prefix == '!'){
-      if (group_command.equals("addGroup")) {
+      String[] command_parts = command.split(" ");
+      String group_command = command_parts[0].substring(1);
+        
+      if (group_command.equals("newGroup")) {
         channel.exchangeDeclare(command_parts[1], "direct");
         channel.queueBind(user, command_parts[1], "");  
       }
-      else if (group_command.equals("addUser")) {
+      else if (group_command.equals("toGroup")) {
         channel.queueBind(command_parts[1], command_parts[2], ""); 
       }
       else if (group_command.equals("delFromGroup")) {
-        channel.queueUnbind(command_parts[1], command_parts[2], ""); 
-        
-        // Caso o usuário se remova (saia) do grupo
+        channel.queueUnbind(command_parts[1], command_parts[2], "");  
         if (command_parts[1].equals(user)) {
           shell = ">> ";
           exchange_name = "";
         }
       }
       else if (group_command.equals("removeGroup")) {
-        channel.exchangeDelete(command_parts[1]);
-        
-        // Remove referência do grupo do shell
+        channel.exchangeDelete(command_parts[1]); 
         if (!exchange_name.equals("")) {
           shell = ">> ";
           exchange_name = "";
