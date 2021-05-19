@@ -72,7 +72,24 @@ public final class MessageData {
     com.google.protobuf.ByteString
         getHourBytes();
  
-
+    /**
+     * <pre>
+     * Informa o nome do group, se a mensagem for para um group
+     * </pre>
+     *
+     * <code>optional string group = 4;</code>
+    */
+    java.lang.String getGroup();
+    /**
+     * <pre>
+     * Informa o nome do group, se a mensagem for para um group
+     * </pre>
+     *
+     * <code>optional string group = 4;</code>
+    */
+    com.google.protobuf.ByteString
+        getGroupBytes();
+    
     /**
      * <code>optional .ChatRabbitMQ.Content Content = 5;</code>
      */
@@ -99,6 +116,7 @@ public final class MessageData {
       Sender_ = "";
       data_ = "";
       Hour_ = ""; 
+      group_ = "";
     }
 
     @java.lang.Override
@@ -144,6 +162,12 @@ public final class MessageData {
               Hour_ = s;
               break;
             } 
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              group_ = s;
+              break;
+            }
             case 42: {
               br.ufs.dcomp.ChatRabbitMQ.MessageData.Content.Builder subBuilder = null;
               if (Content_ != null) {
@@ -305,6 +329,48 @@ public final class MessageData {
         return (com.google.protobuf.ByteString) ref;
       }
     }
+
+    public static final int GROUP_FIELD_NUMBER = 4;
+    private volatile java.lang.Object group_;
+    /**
+     * <pre>
+     * Informa o nome do group, se a mensagem for para um group
+     * </pre>
+     *
+     * <code>optional string group = 4;</code>
+     */
+    public java.lang.String getGroup() {
+      java.lang.Object ref = group_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        group_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Informa o nome do group, se a mensagem for para um group
+     * </pre>
+     *
+     * <code>optional string group = 4;</code>
+     */
+    public com.google.protobuf.ByteString
+        getGroupBytes() {
+      java.lang.Object ref = group_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        group_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
   
     public static final int Content_FIELD_NUMBER = 5;
     private br.ufs.dcomp.ChatRabbitMQ.MessageData.Content Content_;
@@ -348,6 +414,9 @@ public final class MessageData {
       if (!getHourBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, Hour_);
       } 
+      if (!getGroupBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, group_);
+      }
       if (Content_ != null) {
         output.writeMessage(5, getContent());
       }
@@ -366,6 +435,9 @@ public final class MessageData {
       }
       if (!getHourBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, Hour_);
+      }
+      if (!getGroupBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, group_);
       } 
       if (Content_ != null) {
         size += com.google.protobuf.CodedOutputStream
@@ -393,6 +465,8 @@ public final class MessageData {
           .equals(other.getDate());
       result = result && getHour()
           .equals(other.getHour()); 
+      result = result && getGroup()
+          .equals(other.getGroup());    
       result = result && (hasContent() == other.hasContent());
       if (hasContent()) {
         result = result && getContent()
@@ -414,6 +488,7 @@ public final class MessageData {
       hash = (53 * hash) + getDate().hashCode();
       hash = (37 * hash) + Hour_FIELD_NUMBER;
       hash = (53 * hash) + getHour().hashCode(); 
+      hash = (53 * hash) + getGroup().hashCode();
       if (hasContent()) {
         hash = (37 * hash) + Content_FIELD_NUMBER;
         hash = (53 * hash) + getContent().hashCode();
@@ -542,6 +617,8 @@ public final class MessageData {
 
         Hour_ = ""; 
 
+        group_ = "";
+
         if (ContentBuilder_ == null) {
           Content_ = null;
         } else {
@@ -573,6 +650,8 @@ public final class MessageData {
         result.Sender_ = Sender_;
         result.data_ = data_;
         result.Hour_ = Hour_; 
+        result.group_ = group_;
+        
         if (ContentBuilder_ == null) {
           result.Content_ = Content_;
         } else {
@@ -631,6 +710,10 @@ public final class MessageData {
           Hour_ = other.Hour_;
           onChanged();
         } 
+        if (!other.getGroup().isEmpty()) {
+          group_ = other.group_;
+          onChanged();
+        }
         if (other.hasContent()) {
           mergeContent(other.getContent());
         }
@@ -927,6 +1010,18 @@ public final class MessageData {
         return this;
       }     
 
+      public Builder setGroupBytes(
+              com.google.protobuf.ByteString value) {
+            if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+            
+            group_ = value;
+            onChanged();
+            return this;
+    }   
+
       private br.ufs.dcomp.ChatRabbitMQ.MessageData.Content Content_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
           br.ufs.dcomp.ChatRabbitMQ.MessageData.Content, br.ufs.dcomp.ChatRabbitMQ.MessageData.Content.Builder, br.ufs.dcomp.ChatRabbitMQ.MessageData.ContentOrBuilder> ContentBuilder_;
@@ -1095,6 +1190,24 @@ public final class MessageData {
   public interface ContentOrBuilder extends
       // @@protoc_insertion_point(interface_extends:ChatRabbitMQ.Content)
       com.google.protobuf.MessageOrBuilder { 
+
+    /**
+     * <pre>
+     * Tipo do conteúdo no padrão de tipos MIME. Exemplos: "text/plain", "image/png" 
+     * </pre>
+     *
+     * <code>optional string tipo = 1;</code>
+     */
+    java.lang.String getType();
+    /**
+     * <pre>
+     * Tipo do conteúdo no padrão de tipos MIME. Exemplos: "text/plain", "image/png" 
+     * </pre>
+     *
+     * <code>optional string tipo = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getTypeBytes();    
     /**
      * <pre>
      * Sequência de bytes que compõe o Body da Message
@@ -1103,7 +1216,24 @@ public final class MessageData {
      * <code>optional bytes Body = 2;</code>
      */
     com.google.protobuf.ByteString getBody();
-  
+
+     /**
+     * <pre>
+     * Nome do conteúdo, se existente. Exemplos: "logo_ufs.png", "index.html"
+     * </pre>
+     *
+     * <code>optional string nome = 3;</code>
+     */
+    java.lang.String getName();
+    /**
+     * <pre>
+     * Nome do conteúdo, se existente. Exemplos: "logo_ufs.png", "index.html"
+     * </pre>
+     *
+     * <code>optional string nome = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getNameBytes();   
   }
   /**
    * Protobuf type {@code ChatRabbitMQ.Content}
@@ -1117,7 +1247,9 @@ public final class MessageData {
       super(builder);
     }
     private Content() { 
-      Body_ = com.google.protobuf.ByteString.EMPTY; 
+      body_ = com.google.protobuf.ByteString.EMPTY; 
+      type_ = ""; 
+      name_ = "";
     }
 
     @java.lang.Override
@@ -1145,11 +1277,23 @@ public final class MessageData {
               }
               break;
             } 
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              type_ = s;
+              break;
+            }
             case 18: {
 
-              Body_ = input.readBytes();
+              body_ = input.readBytes();
               break;
             } 
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              name_ = s;
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -1173,8 +1317,8 @@ public final class MessageData {
               br.ufs.dcomp.ChatRabbitMQ.MessageData.Content.class, br.ufs.dcomp.ChatRabbitMQ.MessageData.Content.Builder.class);
     } 
     
-    public static final int Body_FIELD_NUMBER = 2;
-    private com.google.protobuf.ByteString Body_;
+    public static final int body_FIELD_NUMBER = 2;
+    private com.google.protobuf.ByteString body_;
     /**
      * <pre>
      * Sequência de bytes que compõe o Body da Message
@@ -1183,10 +1327,92 @@ public final class MessageData {
      * <code>optional bytes Body = 2;</code>
      */
     public com.google.protobuf.ByteString getBody() {
-      return Body_;
+      return body_;
     }
 
-    public static final int NOME_FIELD_NUMBER = 3; 
+    public static final int TYPE_FIELD_NUMBER = 1;
+    private volatile java.lang.Object type_;
+    /**
+     * <pre>
+     * Tipo do conteúdo no padrão de tipos MIME. Exemplos: "text/plain", "image/png" 
+     * </pre>
+     *
+     * <code>optional string tipo = 1;</code>
+     */
+    public java.lang.String getType() {
+      java.lang.Object ref = type_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        type_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Tipo do conteúdo no padrão de tipos MIME. Exemplos: "text/plain", "image/png" 
+     * </pre>
+     *
+     * <code>optional string tipo = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTypeBytes() {
+      java.lang.Object ref = type_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        type_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int NAME_FIELD_NUMBER = 3;
+    private volatile java.lang.Object name_;
+    /**
+     * <pre>
+     * Nome do conteúdo, se existente. Exemplos: "logo_ufs.png", "index.html"
+     * </pre>
+     *
+     * <code>optional string nome = 3;</code>
+     */
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Nome do conteúdo, se existente. Exemplos: "logo_ufs.png", "index.html"
+     * </pre>
+     *
+     * <code>optional string nome = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
      
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1200,9 +1426,15 @@ public final class MessageData {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!Body_.isEmpty()) {
-        output.writeBytes(2, Body_);
+      if (!body_.isEmpty()) {
+        output.writeBytes(2, body_);
       } 
+      if (!body_.isEmpty()) {
+        output.writeBytes(2, body_);
+      }
+      if (!getNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, name_);
+      }
     }
 
     public int getSerializedSize() {
@@ -1210,11 +1442,16 @@ public final class MessageData {
       if (size != -1) return size;
 
       size = 0;
-      if (!Body_.isEmpty()) {
+      if (!body_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, Body_);
+          .computeBytesSize(2, body_);
       }
-       
+      if (!getTypeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, type_);
+      }
+      if (!getNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, name_);
+      }
       memoizedSize = size;
       return size;
     }
@@ -1233,7 +1470,10 @@ public final class MessageData {
       boolean result = true; 
       result = result && getBody()
           .equals(other.getBody());
-          
+      result = result && getName()
+      .equals(other.getName());
+      result = result && getType()
+      .equals(other.getType());
       return result;
     }
 
@@ -1244,8 +1484,12 @@ public final class MessageData {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptorForType().hashCode(); 
-      hash = (37 * hash) + Body_FIELD_NUMBER;
+      hash = (37 * hash) + body_FIELD_NUMBER;
       hash = (53 * hash) + getBody().hashCode();  
+      hash = (37 * hash) + TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getType().hashCode();
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1364,7 +1608,9 @@ public final class MessageData {
       }
       public Builder clear() {
         super.clear(); 
-        Body_ = com.google.protobuf.ByteString.EMPTY; 
+        body_ = com.google.protobuf.ByteString.EMPTY; 
+        type_ = "";  
+        name_ = "";
         return this;
       }
 
@@ -1387,7 +1633,9 @@ public final class MessageData {
 
       public br.ufs.dcomp.ChatRabbitMQ.MessageData.Content buildPartial() {
         br.ufs.dcomp.ChatRabbitMQ.MessageData.Content result = new br.ufs.dcomp.ChatRabbitMQ.MessageData.Content(this); 
-        result.Body_ = Body_; 
+        result.body_ = body_; 
+        result.type_ = type_; 
+        result.name_ = name_;
         onBuilt();
         return result;
       }
@@ -1433,6 +1681,14 @@ public final class MessageData {
         if (other.getBody() != com.google.protobuf.ByteString.EMPTY) {
           setBody(other.getBody());
         } 
+        if (!other.getType().isEmpty()) {
+          type_ = other.type_;
+          onChanged();
+        }
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          onChanged();
+        }
         onChanged();
         return this;
       }
@@ -1458,7 +1714,95 @@ public final class MessageData {
         }
         return this;
       } 
-    
+      
+      private java.lang.Object type_ = "";
+      /**
+       * <pre>
+       * Tipo do conteúdo no padrão de tipos MIME. Exemplos: "text/plain", "image/png" 
+       * </pre>
+       *
+       * <code>optional string tipo = 1;</code>
+       */
+      public java.lang.String getType() {
+        java.lang.Object ref = type_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          type_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Tipo do conteúdo no padrão de tipos MIME. Exemplos: "text/plain", "image/png" 
+       * </pre>
+       *
+       * <code>optional string tipo = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getTypeBytes() {
+        java.lang.Object ref = type_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          type_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Tipo do conteúdo no padrão de tipos MIME. Exemplos: "text/plain", "image/png" 
+       * </pre>
+       *
+       * <code>optional string tipo = 1;</code>
+       */
+      public Builder setType(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        type_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Tipo do conteúdo no padrão de tipos MIME. Exemplos: "text/plain", "image/png" 
+       * </pre>
+       *
+       * <code>optional string tipo = 1;</code>
+       */
+      public Builder clearType() {
+        
+        type_ = getDefaultInstance().getType();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Tipo do conteúdo no padrão de tipos MIME. Exemplos: "text/plain", "image/png" 
+       * </pre>
+       *
+       * <code>optional string tipo = 1;</code>
+       */
+      public Builder setTypeBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        type_ = value;
+        onChanged();
+        return this;
+      }
      
       /**
        * <pre>
@@ -1468,7 +1812,7 @@ public final class MessageData {
        * <code>optional string tipo = 1;</code>
        */ 
 
-      private com.google.protobuf.ByteString Body_ = com.google.protobuf.ByteString.EMPTY;
+      private com.google.protobuf.ByteString body_ = com.google.protobuf.ByteString.EMPTY;
       /**
        * <pre>
        * Sequência de bytes que compõe o Body da Message
@@ -1477,7 +1821,7 @@ public final class MessageData {
        * <code>optional bytes Body = 2;</code>
        */
       public com.google.protobuf.ByteString getBody() {
-        return Body_;
+        return body_;
       }
       /**
        * <pre>
@@ -1491,7 +1835,7 @@ public final class MessageData {
     throw new NullPointerException();
   }
   
-        Body_ = value;
+        body_ = value;
         onChanged();
         return this;
       }
@@ -1504,7 +1848,7 @@ public final class MessageData {
        */
       public Builder clearBody() {
         
-        Body_ = getDefaultInstance().getBody();
+        body_ = getDefaultInstance().getBody();
         onChanged();
         return this;
       }  
@@ -1578,7 +1922,7 @@ public final class MessageData {
     java.lang.String[] descriptorData = {
       "\n\035src/main/proto/Message.proto\022\014ChatRab" +
       "bitMQ\"p\n\010Message\022\017\n\007Sender\030\001 \001(\t\022\014\n\004da" +
-      "ta\030\002 \001(\t\022\014\n\004Hour\030\003 \001(\t\022\r\n\005grupo\030\004 \001(\t\022(\n" +
+      "ta\030\002 \001(\t\022\014\n\004Hour\030\003 \001(\t\022\r\n\005group\030\004 \001(\t\022(\n" +
       "\010Content\030\005 \001(\0132\026.ChatRabbitMQ.Content\"" +
       "5\n\010Content\022\014\n\004tipo\030\001 \001(\t\022\r\n\005Body\030\002 \001(\014" +
       "\022\014\n\004nome\030\003 \001(\tB)\n\031br.ufs.dcomp.ChatRabbi" +
@@ -1601,7 +1945,7 @@ public final class MessageData {
     internal_static_ChatRabbitMQ_Message_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ChatRabbitMQ_Message_descriptor,
-        new java.lang.String[] { "Sender", "Data", "Hour", "Content", });
+        new java.lang.String[] { "Sender", "Data", "Hour","Group", "Content", });
     internal_static_ChatRabbitMQ_Content_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_ChatRabbitMQ_Content_fieldAccessorTable = new

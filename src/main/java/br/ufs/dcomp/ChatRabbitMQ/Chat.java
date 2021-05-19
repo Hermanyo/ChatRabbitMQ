@@ -15,7 +15,7 @@ public class Chat {
   public static String command, user, shell, queue_name, exchange_name = "", destination = "";  
   public static Scanner in = new Scanner(System.in);
     
-  private static byte[] serializeData(byte[] buffer) throws IOException{
+  private static byte[] serializeData(byte[] buffer,String mime_type) throws IOException{
     Calendar calendar = Calendar.getInstance();
     final String DATA_SEND = calendar.get(Calendar.DAY_OF_MONTH) + "/" 
                     + (calendar.get(Calendar.MONTH) + 1) + "/" 
@@ -24,6 +24,7 @@ public class Chat {
                     + calendar.get(Calendar.MINUTE);
     
     MessageData.Content.Builder content = MessageData.Content.newBuilder(); 
+    content.setType(mime_type);
     content.setBody(ByteString.copyFrom(buffer));
     
     MessageData.Message.Builder raw = MessageData.Message.newBuilder();
@@ -31,7 +32,8 @@ public class Chat {
     raw.setDate(DATA_SEND);
     raw.setHour(HOUR_SEND); 
     raw.setContent(content);
-    
+    raw.setGroup(exchange_name);
+
     return raw.build().toByteArray();
   }
   
@@ -41,11 +43,19 @@ public class Chat {
     String displayed_message = ""; 
     
     String message = content.getBody().toStringUtf8();
-    displayed_message = "(" + message_data.getDate() + " às " 
-                        + message_data.getHour() + ") " + message_data.getSender() 
-                        + " diz: " + message; 
     
-    
+    if(content.getType().equals("text/plain")){
+      if(message_data.getGroup().equals("")){
+        displayed_message = "(" + message_data.getDate() + " às " 
+                            + message_data.getHour() + ") " + message_data.getSender() 
+                            + " diz: " + message; 
+      }
+      else{
+        displayed_message = "(" + message_data.getDate() + " às " 
+                            + message_data.getHour() + ") " + message_data.getSender() 
+                            + "#" + message_data.getGroup() + " diz: " + message;
+      }
+    } 
     return displayed_message;
   }
    
@@ -57,8 +67,40 @@ public class Chat {
       destination = command.trim().substring(1);
       exchange_name = "";
     } 
-    else { 
-        channel.basicPublish(exchange_name, destination, null, serializeData(command.getBytes("UTF-8"))); 
+    else if(prefix == '!'){
+      if (group_command.equals("addGroup")) {
+        channel.exchangeDeclare(command_parts[1], "direct");
+        channel.queueBind(user, command_parts[1], "");  
+      }
+      else if (group_command.equals("addUser")) {
+        channel.queueBind(command_parts[1], command_parts[2], ""); 
+      }
+      else if (group_command.equals("delFromGroup")) {
+        channel.queueUnbind(command_parts[1], command_parts[2], ""); 
+        
+        // Caso o usuário se remova (saia) do grupo
+        if (command_parts[1].equals(user)) {
+          shell = ">> ";
+          exchange_name = "";
+        }
+      }
+      else if (group_command.equals("removeGroup")) {
+        channel.exchangeDelete(command_parts[1]);
+        
+        // Remove referência do grupo do shell
+        if (!exchange_name.equals("")) {
+          shell = ">> ";
+          exchange_name = "";
+        }
+      }
+    }
+    else if (prefix == '#') {
+      shell = command.trim() + ">> ";
+      exchange_name = command.trim().substring(1);
+      destination = "";
+    }
+    else {  
+        channel.basicPublish(exchange_name, destination, null, serializeData(command.getBytes("UTF-8"), "text/plain"));
     } 
   }
   
