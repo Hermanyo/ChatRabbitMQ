@@ -5,17 +5,24 @@ import com.rabbitmq.client.*;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import java.io.File; 
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 
 import java.util.Scanner;
 import java.util.Calendar; 
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.FileSystemNotFoundException;
+
+
 public class Chat {
   public static String command, user, shell, queue_name, exchange_name = "", destination = "";  
   public static Scanner in = new Scanner(System.in);
     
-  private static byte[] serializeData(byte[] buffer,String mime_type) throws IOException{
+  private static byte[] serializeData(byte[] buffer, String mime_type, String file_name ) throws IOException{
     Calendar calendar = Calendar.getInstance();
     final String DATA_SEND = calendar.get(Calendar.DAY_OF_MONTH) + "/" 
                     + (calendar.get(Calendar.MONTH) + 1) + "/" 
@@ -25,6 +32,7 @@ public class Chat {
     
     MessageData.Content.Builder content = MessageData.Content.newBuilder(); 
     content.setType(mime_type);
+    content.setName(file_name);
     content.setBody(ByteString.copyFrom(buffer));
     
     MessageData.Message.Builder raw = MessageData.Message.newBuilder();
@@ -55,7 +63,33 @@ public class Chat {
                             + message_data.getHour() + ") " + message_data.getSender() 
                             + "#" + message_data.getGroup() + " diz: " + message;
       }
-    } 
+    }
+    else{
+      String file_name = content.getName();
+      byte[] file_buffer = content.getBody().toByteArray();
+      String DEFAULT_DOWNLOAD_FOLDER = "/home/ubuntu/environment/chat/downloads/";
+
+      try {
+ 
+        File folder = new File(DEFAULT_DOWNLOAD_FOLDER + "/" + user);
+        File file = new File(folder.getPath() + "/" + file_name);
+        
+        folder.mkdirs();
+        file.createNewFile();
+        Files.write(file.toPath(), file_buffer);
+
+        displayed_message = "(" + message_data.getDate() + " às " 
+          + message_data.getHour() + ") "
+          + "Arquivo " + file_name 
+          + " recebido de " + "@" + message_data.getSender() 
+          + (!message_data.getGroup().equals("") 
+            ? " em " +  "#" + message_data.getGroup() + "!" 
+            : "!");
+      }
+      catch (IOException io_e) {
+        System.err.println(io_e);
+      } 
+    }
     return displayed_message;
   }
    
@@ -74,12 +108,15 @@ public class Chat {
       if (group_command.equals("newGroup")) {
         channel.exchangeDeclare(command_parts[1], "direct");
         channel.queueBind(user, command_parts[1], "");  
+        channel.queueBind(user + "_files", command_parts[1], "files");
       }
       else if (group_command.equals("toGroup")) {
         channel.queueBind(command_parts[1], command_parts[2], ""); 
+        channel.queueBind(command_parts[1] + "_files", command_parts[2], "files");
       }
       else if (group_command.equals("delFromGroup")) {
         channel.queueUnbind(command_parts[1], command_parts[2], "");  
+        channel.queueUnbind(command_parts[1] + "_files", command_parts[2], "files");
         if (command_parts[1].equals(user)) {
           shell = ">> ";
           exchange_name = "";
@@ -92,6 +129,54 @@ public class Chat {
           exchange_name = "";
         }
       }
+      else if (group_command.equals("upload")) {
+        if (!exchange_name.equals("") || !destination.equals("")) {
+          String outputMessage = "Enviando " 
+                    + command_parts[1]
+                    + " para " 
+                    + "@" + destination;
+          
+          System.out.println(outputMessage);
+          
+          try {
+            Path source = Paths.get(command_parts[1]);
+            
+            Runnable uploader = new Runnable() {
+              public void run() {
+                try {
+                  String[] path_array = command_parts[1].split("/");
+                  String mime_type = Files.probeContentType(source);
+                  String file_name = path_array[path_array.length - 1];
+                  byte[] file_buffer = Files.readAllBytes(source);
+                  
+                  channel.basicPublish(
+                      exchange_name, 
+                      destination.equals("") ? "files" : destination + "_files", 
+                      null, 
+                      serializeData(file_buffer, mime_type, file_name)
+                  );
+                  System.out.println("\n"
+                    + "Arquivo " + command_parts[1] 
+                    + " foi enviado para " 
+                    + "@" + destination  
+                  );  
+                }
+                catch(Exception e) {
+                  System.err.println(e);
+                }
+                finally{
+                   System.out.print(shell);
+                }
+              }
+            };
+            
+            new Thread(uploader).start();
+          }  
+          catch(Exception e) { 
+            System.err.println("Erro " + e);
+          }
+        }
+      }
     }
     else if (prefix == '#') {
       shell = command.trim() + ">> ";
@@ -99,7 +184,7 @@ public class Chat {
       destination = "";
     }
     else {  
-        channel.basicPublish(exchange_name, destination, null, serializeData(command.getBytes("UTF-8"), "text/plain"));
+        channel.basicPublish(exchange_name, destination, null, serializeData(command.getBytes("UTF-8"), "text/plain", null));
     } 
   }
   
@@ -120,8 +205,9 @@ public class Chat {
     queue_name = user;
     shell = ">> ";  
     
-    channel.queueDeclare(queue_name, false,false,false,null); 
-    
+    channel.queueDeclare(queue_name, false,false,false,null);  
+    channel.queueDeclare(queue_name + "_files", false, false, false, null);
+
     Runnable supplier = new Runnable() {
       public void run() {
         try {
@@ -152,6 +238,7 @@ public class Chat {
     Thread th = new Thread(supplier);
     th.start();
     
-    channel.basicConsume(queue_name, true,    consumer); 
+    channel.basicConsume(queue_name, true, consumer); 
+    channel.basicConsume(queue_name + "_files", true,    consumer);
   }
 }

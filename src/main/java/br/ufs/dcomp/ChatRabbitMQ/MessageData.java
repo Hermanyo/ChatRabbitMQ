@@ -1974,7 +1974,7 @@ public final class MessageData {
        *
        * <code>optional string nome = 3;</code>
        */
-      public Builder setNome(
+      public Builder setName(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
@@ -1991,7 +1991,7 @@ public final class MessageData {
        *
        * <code>optional string nome = 3;</code>
        */
-      public Builder clearNome() {
+      public Builder clearName() {
         
         name_ = getDefaultInstance().getName();
         onChanged();
@@ -2004,7 +2004,7 @@ public final class MessageData {
        *
        * <code>optional string nome = 3;</code>
        */
-      public Builder setNomeBytes(
+      public Builder setNameBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
