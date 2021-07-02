@@ -11,12 +11,22 @@ import java.io.IOException;
 
 import java.util.Scanner;
 import java.util.Calendar; 
+import java.util.Base64;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.FileSystemNotFoundException;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class Chat {
   public static String command, user, shell, queue_name, exchange_name = "", destination = "";  
@@ -92,7 +102,48 @@ public class Chat {
     }
     return displayed_message;
   }
-   
+     private static String getValue(JSONObject obj, String key) {
+    String value = (String) obj.get(key);
+    
+    return (
+            !(value.equals("") || 
+            (key.equals("destination") && value.matches("(.*)_files(.*)")))
+           )
+          ? value + ", " 
+          : "";
+  }
+  
+  private static void doRequest(String path, String json_key) { 
+    try {
+      Client client = ClientBuilder.newClient();
+      Response res = client.target("http://target-group-amqp-df4b5ea3fe3cc2e7.elb.us-east-1.amazonaws.com/")
+                  .path(path)
+                  .request(MediaType.APPLICATION_JSON)
+                  .header("Authorization", "Basic " + Base64.getEncoder().encodeToString("admin:sd2543".getBytes()))
+                  .get();
+                  
+      if (res.getStatus() == 200) {
+        String json = res.readEntity(String.class);
+        JSONParser json_parser = new JSONParser();
+      	Object obj = json_parser.parse(json);
+      	JSONArray json_array = (JSONArray) obj;
+      	
+      	json_array.forEach(elem -> 
+	        System.out.print(
+	           getValue((JSONObject) elem, json_key)
+	        )
+      	);
+      	
+      	System.out.println("");
+      }
+      else {
+        System.out.println(res.getStatus());
+      }
+    } 
+    catch(Exception e) {
+      e.printStackTrace();
+    }
+  }
   private static void getCommand(Channel channel) throws UnsupportedEncodingException, IOException { 
     char prefix = command.trim().charAt(0);
      
@@ -105,12 +156,12 @@ public class Chat {
       String[] command_parts = command.split(" ");
       String group_command = command_parts[0].substring(1);
         
-      if (group_command.equals("newGroup")) {
+      if (group_command.equals("newGroup") || group_command.equals("addGroup") ) {
         channel.exchangeDeclare(command_parts[1], "direct");
         channel.queueBind(user, command_parts[1], "");  
         channel.queueBind(user + "_files", command_parts[1], "files");
-      }
-      else if (group_command.equals("toGroup")) {
+      } 
+      else if (group_command.equals("toGroup") || group_command.equals("addUser")) {
         channel.queueBind(command_parts[1], command_parts[2], ""); 
         channel.queueBind(command_parts[1] + "_files", command_parts[2], "files");
       }
@@ -176,6 +227,15 @@ public class Chat {
             System.err.println("Erro " + e);
           }
         }
+      }
+      else if (group_command.equals("listUsers")) {
+          doRequest("/api/exchanges/%2F/"+ command_parts[1] +"/bindings/source", "destination");
+      }
+      else if (group_command.equals("listGroups")) {
+        doRequest("/api/queues/%2F/"+ user +"/bindings", "source");
+      }
+      else {
+        System.err.println("Comando inválido!");
       }
     }
     else if (prefix == '#') {
